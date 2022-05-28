@@ -265,11 +265,6 @@ words.style.color = (palette[index]);
 document.body.style.backgroundColor = (palette[index -1]);
 }
 
-function saveTheType(){
-  if (saveType == 0){
-    saveCanvas();
-  }
-}
 
 function saveType(){
 console.log('mousePressed');
