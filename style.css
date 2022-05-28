@@ -1,0 +1,102 @@
+/*
+LIST OF FONTS
+Decovar - DecovarAlpha-VF.ttf
+Handjet - HandjetVF-All.ttf
+Tiltwarp - TiltWarp[HROT,VROT].ttf
+Kyiv - KyivTypeTitling-VarGX.ttf
+Amstelvar - Amstelvar-Roman.ttf
+*/
+
+body {
+  height: 150vh;
+  display: block;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-color: #022b3a;
+}
+
+@font-face {
+  font-family: decovar;
+  font-style: normal;
+  src: url('assets/DecovarAlpha-VF.ttf');
+}
+
+body.font-0 {
+  font-family: decovar;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: handjet;
+  font-style: normal;
+  src: url('assets/HandjetVF-All.ttf');
+}
+
+body.font-1 {
+  font-family: handjet;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: tiltwrap;
+  font-style: normal;
+  src: url('assets/TiltWarp[HROT,VROT].ttf');
+}
+
+body.font-2 {
+  font-family: tiltwrap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: kyiv;
+  font-style: normal;
+  src: url('assets/KyivTypeTitling-VarGX.ttf');
+}
+
+body.font-3 {
+  font-family: kyiv;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: amstelvar;
+  font-style: normal;
+  src: url('assets/Amstelvar-Roman.ttf');
+}
+
+body.font-4 {
+  font-family: amstelvar;
+  font-style: normal;
+}
+
+.variable {
+  color: #f1f1f1;
+  font-size: 50px;
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20vh;
+  margin-left: 5rem;
+  margin-right: 5rem;
+  margin-bottom: 20vh;
+  font-variation-settings: 
+  'wght' 900,
+  'wdth' 100,
+  'slnt' 0,
+  'opsz' 42.4,
+  'XOPQ' 225.18,
+  'GRAD' 83.96,
+  'CONT' 500,
+  'HROT' 0,
+  'VROT' 0,
+  'ESHP' 1,
+  'EGRD' 1.0,
+  'WMX2' 0,
+  'SKLD' 0,
+  'SKLB' 0;
+
+}
