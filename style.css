@@ -100,3 +100,31 @@ body.font-4 {
   'SKLB' 0;
 
 }
+
+p {
+  top: 20px;
+  text-align: center;
+  font-family: handjet;
+  font-style: normal;
+  font-size: 16pt;
+}
+
+#count_down_timer{
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  text-align: right;
+  font-family: handjet;
+  font-style: normal;
+  font-size: 16pt;
+}
+
+#log {
+  position: absolute;
+  top: 20px;
+  left: 30px;
+  text-align: left;
+  font-family: handjet;
+  font-style: normal;
+  font-size: 16pt;
+}
