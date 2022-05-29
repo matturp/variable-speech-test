@@ -1,8 +1,8 @@
 
 // ARDUINO
 
-let serial; // variable for the serial object
-let latestData = "waiting for data"; // variable to hold the data
+// let serial; // variable for the serial object
+// let latestData = "waiting for data"; // variable to hold the data
 
 // SPEECH TO TEXT
 
@@ -31,8 +31,11 @@ let paletteC = ["#ffe8d6","#829e95","#f1f1f1","#ff7f11","#ffffff","#829e95","#02
 let paletteD = ["#ffcdb2","#ffb4a2","#e5989b","#b5838d","#6d6875","#ffcdb2","#ffb4a2","#e5989b","#b5838d","#6d6875"];
 let paletteE = ["#fbf8cc","#fde4cf","#ffcfd2","#f1c0e8","#cfbaf0","#a3c4f3","#90dbf4","#8eecf5","#98f5e1","#b9fbc0"];
 let paletteF = ["#f8f9fa","#e9ecef","#dee2e6","#ced4da","#adb5bd","#6c757d","#495057","#343a40","#212529", "#FEEBF4"];
+let paletteG = ["#272727","#fffffc","#ffb800","#DB5A42"];
+let paletteH = ["#272727","#fffffc","#a18276","#09e85e","#9ba2ff","#8a84e2","#cfd11a"];
+let paletteI = ["#d8f3dc","#95d5b2","#52b788","#2d6a4f","#1b4332","#081c15"];
 
-let palette = paletteC; // CHANGE PALETTE LETTER A - F TO VARY PALETTES
+let palette = paletteI; // CHANGE PALETTE LETTER A - F TO VARY PALETTES
 let sensitivity = 1; // RANGE 0 - 1
 
 
@@ -49,6 +52,12 @@ document.body.style.backgroundColor = (palette[index -1]);
 let mic, fft;
 let voiceWeight;
 
+let overlay;
+let type;
+
+function preload(){
+  type = loadFont('assets/HandjetVF-All.ttf');
+}
 
 // SETUP ---------------------------------------------------------------------------------
 
@@ -56,64 +65,70 @@ function setup() {
   //noCanvas();
 
   createCanvas(windowWidth, 500);
+  //overlay = createGraphics(windowWidth, 500);
   //background(0);
 
   mic = new p5.AudioIn();
   fft = new p5.FFT(0.9,512);
   //mic.start();
   fft.setInput(mic);
+
+  // weightSlider = createSlider(100, 900, 500);
+  // weightSlider.position(20,40);
+  // weightSlider.style('width', '180px');
+
   
   variable = select('.variable');
 
   // ARDUINO
 
-  // serial constructor
-  serial = new p5.SerialPort();
-  // get a list of all connected serial devices
-  serial.list();
-  // serial port to use - you'll need to change this
-  serial.open('/dev/tty.usbmodem14201');
-  // callback for when the sketchs connects to the server
-  serial.on('connected', serverConnected);
-  // callback to print the list of serial devices
-  serial.on('list', gotList);
-  // what to do when we get serial data
-  serial.on('data', gotData);
-  // what to do when there's an error
-  serial.on('error', gotError);
-  // when to do when the serial port opens
-  serial.on('open', gotOpen);
-  // what to do when the port closes
-  serial.on('close', gotClose);
+  // // serial constructor
+  // serial = new p5.SerialPort();
+  // // get a list of all connected serial devices
+  // serial.list();
+  // // serial port to use - you'll need to change this
+  // serial.open('/dev/tty.usbmodem142101');
+  // // callback for when the sketchs connects to the server
+  // serial.on('connected', serverConnected);
+  // // callback to print the list of serial devices
+  // serial.on('list', gotList);
+  // // what to do when we get serial data
+  // serial.on('data', gotData);
+  // // what to do when there's an error
+  // serial.on('error', gotError);
+  // // when to do when the serial port opens
+  // serial.on('open', gotOpen);
+  // // what to do when the port closes
+  // serial.on('close', gotClose);
 }
 
 // ARDUINO
 
-function serverConnected() {
-  console.log("Connected to Server");
-}
+// function serverConnected() {
+//   console.log("Connected to Server");
+// }
 
-// list the ports
-function gotList(thelist) {
-  console.log("List of Serial Ports:");
+// // list the ports
+// function gotList(thelist) {
+//   console.log("List of Serial Ports:");
 
-  for (let i = 0; i < thelist.length; i++) {
-    console.log(i + " " + thelist[i]);
-  }
-}
+//   for (let i = 0; i < thelist.length; i++) {
+//     console.log(i + " " + thelist[i]);
+//   }
+// }
 
-function gotOpen() {
-  console.log("Serial Port is Open");
-}
+// function gotOpen() {
+//   console.log("Serial Port is Open");
+// }
 
-function gotClose() {
-  console.log("Serial Port is Closed");
-  latestData = "Serial Port is Closed";
-}
+// function gotClose() {
+//   console.log("Serial Port is Closed");
+//   latestData = "Serial Port is Closed";
+// }
 
-function gotError(theerror) {
-  console.log(theerror);
-}
+// function gotError(theerror) {
+//   console.log(theerror);
+// }
 
 // when data is received in the serial buffer
 
@@ -128,20 +143,23 @@ function gotData() {
 
 // SPEECH INPUT
 
+document.body.onkeydown = function() {
+  mic.start();
+  startRecognition();
+}
+
 let recognitionBusy = false;
 
 function startRecognition() {
   if (recognitionBusy) return;
 
   recognition.start();
-  //mic.start();
+  mic.start();
   console.log('Ready to receive a color command.');
+  document.getElementById("log").innerHTML = "Ready to receive a command.";
 
   recognitionBusy = true;
-}
 
-document.body.onkeydown = function() {
-  mic.start();
 }
 
 let font = 0;
@@ -152,7 +170,8 @@ recognition.onresult = function(event) {
 
   var words = event.results[0][0].transcript;
   diagnostic.textContent = words;
-  console.log('Confidence: ' + event.results[0][0].confidence);  
+  console.log('Confidence: ' + event.results[0][0].confidence);
+  document.getElementById("log").innerHTML = " ";  
 
   // RANDOMISE FONTS
 
@@ -175,6 +194,8 @@ function draw() {
   //background((palette[index -1]));
   //background('red');
   clear();
+  //drawOverlay();
+  //image(overlay,0,0);
 
   // TEXT VARIABLE STYLING
 
@@ -201,6 +222,7 @@ function draw() {
   voiceWorm = map(highMid, 0, 50, 0, 1000);
 
   variable.style('font-variation-settings', 
+  // "'wght' " + weightSlider.value() +
   " 'wght' " + ((voiceWeight) * sensitivity) + // AMSTELVAR, KYIV, HANDJET
   ", 'wdth' " + (voiceWidth * sensitivity) + // AMSTELVAR
   ", 'opsz' " + (voiceOpticalSize * sensitivity) + // AMSTELVAR
@@ -218,25 +240,25 @@ function draw() {
 
   // ARDUINO
 
-  var data = [];
-  data = latestData.split(",");
-  console.log(data[3] + ' ' + data[4] + ' ' + data[5]);
+  // var data = [];
+  // data = latestData.split(",");
+  // console.log(data[3] + ' ' + data[4] + ' ' + data[5]);
 
-  // 3 - voice to speech
-  // 4 - save
-  // 5 - unassigned 
+  // // 3 - voice to speech
+  // // 4 - save
+  // // 5 - unassigned 
 
-  if(data[4] == 0)
-  {
-    saveType();
-  }
+  // if(data[5] == 0){
+  //   debounceType.fire();
+  // }
 
-  if(data[3] == 0)
-  {
-    startRecognition();
-  }
+  // if(data[4] == 0){
+  
+  // }
 
-
+  // if(data[3] == 0){
+  //   startRecognition();
+  // }
 
   let rLowMid = map(mid, 0, 200, 0, 20);
   let rMid = map(mid, 0, 50, 0, 20);
@@ -255,6 +277,7 @@ function draw() {
 
 recognition.onspeechend = function() {
   recognition.stop();
+  document.getElementById("log").innerHTML = " ";  
 
 let index = Math.random();
 index *= palette.length;
@@ -265,6 +288,28 @@ words.style.color = (palette[index]);
 document.body.style.backgroundColor = (palette[index -1]);
 }
 
+// class DebounceSave {
+// 	constructor(cooldown, action) {
+// 		this.previousTime = -1;
+// 		this.cooldown = cooldown;
+// 		this.action = action;
+// 	}
+// 	fire() {
+// 		if (Date.now() < this.previousTime + this.cooldown) return;
+
+// 		this.action();
+
+// 		this.previousTime = Date.now();
+// 	}
+// }
+
+// var debounceType = new DebounceSave(1000, function () {
+// 	saveType();
+// });
+
+function mousePressed() {
+  saveType();
+}
 
 function saveType(){
 console.log('mousePressed');
@@ -301,22 +346,15 @@ console.log('htmlcanvas', canvas);
 });
 }
 
+var timerVariable = setInterval(countDownTimer, 1000);
+var totalSeconds = 120;
 
-// TRIAL CODE FOR ALTERING SIZE
+function countDownTimer() {
+  totalSeconds --;
+  var seconds = totalSeconds;
+  document.getElementById("count_down_timer").innerHTML = "Timer: " + seconds;
 
-// let para = document.getElementById('words');
-
-// // Grabbing the text
-// let text = para.innerText;
-// // Getting rid of the text
-// para.innerText = '';
-
-// // Create a new span per letter, and appending to the paragraph
-// for(let i = 0; i < text.length; i++)
-// {
-//   let span = document.createElement('span');
-//   span.innerText = text[i];
-  
-//   span.style.fontSize = Math.floor(Math.random() * 50) + 'px';
-//   para.appendChild(span);
-// }
+  if (seconds == 0){
+    clearInterval(timerVariable);
+  }
+}
