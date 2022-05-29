@@ -55,6 +55,11 @@ let voiceWeight;
 let overlay;
 let type;
 
+// Used for JS screen capture.
+const canvas = document.createElement('canvas')
+const context = canvas.getContext('2d')
+const video = document.createElement('video')
+
 function preload(){
   type = loadFont('assets/HandjetVF-All.ttf');
 }
@@ -100,6 +105,8 @@ function setup() {
   // serial.on('open', gotOpen);
   // // what to do when the port closes
   // serial.on('close', gotClose);
+
+  initialiseScreenCapture()
 }
 
 // ARDUINO
@@ -311,39 +318,44 @@ function mousePressed() {
   saveType();
 }
 
-function saveType(){
-console.log('mousePressed');
+async function initialiseScreenCapture() {
+  // TODO: I hard-coded this because I can't find the right versions of
+  // window.height/innerHeight/outerHeight or whatever to get it to work.
 
+  canvas.width = 1920
+  canvas.height = 1080
+  // canvas.width = window.width
+  // canvas.height = window.height
 
-  html2canvas(document.body, {
+  const captureStream = await navigator.mediaDevices.getDisplayMedia()
+  video.srcObject = captureStream
+  video.play()
+}
 
-    width: width,
-    height: 1080,
-    backgroundColor: document.body.style.backgroundColor
+function saveType() {
+  console.log('mousePressed')
 
-  }).then(function(canvas) {
-    //document.body.appendChild(canvas);
-    //var canvas = document.getElementById('canvas');
-console.log('htmlcanvas', canvas);
-    canvas.toBlob(blob => {
-    // Create a base64 URL of the blob.
-    const url = window.URL.createObjectURL(blob);
-    
+  try {
+    // context.drawImage(video, 0, 0, window.width, window.height)
+    // TODO: I hard-coded this because I can't find the right versions of
+    // window.height/innerHeight/outerHeight or whatever to get it to work.
+    context.drawImage(video, 0, 0, 1920, 1080)
+    const image = canvas.toDataURL()
+
     // Create a new link/a tag.
     const link = document.createElement('a')
-    console.log('blob');
+
     // Add the base64 string as the destination of the link,
     // plus some other properties for downloading.
-    link.target = '_blank';
-    link.download = 'img.png';
-    link.href = url;
-    
+    link.target = '_blank'
+    link.download = 'img.png'
+    link.href = image
+
     // Click it. Automagically.
     link.click()
-    
-    setTimeout(() => URL.revokeObjectURL(url), 10000);
-    })
-});
+  } catch (err) {
+    console.error('Error: ' + err)
+  }
 }
 
 var timerVariable = setInterval(countDownTimer, 1000);
